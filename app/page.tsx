@@ -267,9 +267,7 @@ export default function Page() {
         <nav className="ml-8 hidden gap-6 sm:flex">
           {[
             ['Concepts', '#concepts'],
-            ['Events', '#events'],
-            ['Listening', '#listening-room'],
-            ['Meditation', '#guided-meditation'],
+            ['History', '#history'],
             ['Join', '#newsletter'],
           ].map(([label, href], index) => (
             <motion.a
@@ -492,7 +490,7 @@ export default function Page() {
 
         {/* EVENTS */}
         <AnimatedSection
-          id="events"
+          id="history"
           labelledBy="events-title"
           className="
             border-b border-[#b8b9ac]

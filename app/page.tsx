@@ -87,9 +87,8 @@ function AnimatedSection({
       initial="hidden"
       whileInView="visible"
       viewport={{
-        once: false,
-        amount: 0.22,
-        margin: '-8% 0px -8% 0px',
+        once: true,
+        amount: 0.2,
       }}
       className={`snap-start ${className}`}
     >
@@ -157,7 +156,40 @@ function VenueRender() {
       <iframe
         title="Venue Layout — 3D Render"
         src="/venue-layout.html?v=3"
-        className="venue-render__iframe pointer-events-none"
+        className="venue-render__iframe immersive-render pointer-events-none"
+        data-render-id="venue"
+      />
+    </div>
+  )
+}
+
+function ListeningRoomRender() {
+  return (
+    <div
+      className="venue-render venue-render--exact pointer-events-none"
+      aria-label="Interactive 3D render of the Listening Room"
+    >
+      <iframe
+        title="Listening Room — 3D Render"
+        src="/listening-room.html"
+        className="venue-render__iframe immersive-render pointer-events-none"
+        data-render-id="listening"
+      />
+    </div>
+  )
+}
+
+function GuidedMeditationRender() {
+  return (
+    <div
+      className="venue-render venue-render--exact pointer-events-none"
+      aria-label="Interactive 3D render of the Guided Meditation space"
+    >
+      <iframe
+        title="Guided Meditation — 3D Render"
+        src="/guided-meditation.html"
+        className="venue-render__iframe immersive-render pointer-events-none"
+        data-render-id="meditation"
       />
     </div>
   )
@@ -170,19 +202,27 @@ export default function Page() {
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
-    const viewport = document.getElementById('top')
-    const iframe = document.querySelector<HTMLIFrameElement>('.venue-render__iframe')
-    if (!viewport || !iframe) return
+    const iframes = document.querySelectorAll<HTMLIFrameElement>('.immersive-render')
+    if (iframes.length === 0) return
+    const container = document.querySelector('main')
+    if (!container) return
     const update = () => {
-      const max = Math.max(1, viewport.scrollHeight - viewport.clientHeight)
-      iframe.contentWindow?.postMessage({ type: 'immersia-scroll', progress: viewport.scrollTop / max }, '*')
+      const max = Math.max(1, container.scrollHeight - container.clientHeight)
+      const progress = container.scrollTop / max
+      iframes.forEach((iframe) => {
+        iframe.contentWindow?.postMessage({ type: 'immersia-scroll', progress }, '*')
+      })
     }
-    viewport.addEventListener('scroll', update, { passive: true })
-    iframe.addEventListener('load', update)
+    container.addEventListener('scroll', update, { passive: true })
+    iframes.forEach((iframe) => {
+      iframe.addEventListener('load', update)
+    })
     update()
     return () => {
-      viewport.removeEventListener('scroll', update)
-      iframe.removeEventListener('load', update)
+      container.removeEventListener('scroll', update)
+      iframes.forEach((iframe) => {
+        iframe.removeEventListener('load', update)
+      })
     }
   }, [])
 
@@ -200,7 +240,7 @@ export default function Page() {
   }
 
   return (
-    <main className="h-screen overflow-hidden bg-[#f1eee7] text-[#0b0d0c]">
+    <main className="h-screen overflow-y-auto snap-y snap-mandatory bg-[#f1eee7] text-[#0b0d0c]">
       {/* HEADER */}
       <header
         className="
@@ -228,6 +268,8 @@ export default function Page() {
           {[
             ['Concepts', '#concepts'],
             ['Events', '#events'],
+            ['Listening', '#listening-room'],
+            ['Meditation', '#guided-meditation'],
             ['Join', '#newsletter'],
           ].map(([label, href], index) => (
             <motion.a
@@ -270,8 +312,7 @@ export default function Page() {
       <div
         id="top"
         className="
-          mx-auto h-[calc(100vh-3.5rem)] max-w-[1160px]
-          snap-y snap-mandatory overflow-y-auto overscroll-contain
+          mx-auto max-w-[1160px]
           px-5 sm:px-8 lg:px-12
         "
       >
@@ -368,6 +409,83 @@ export default function Page() {
               The artist performs from the middle of the room, making this an unforgettable experience. We&apos;re planning on hosting this at{' '}
               <a href="https://la-java.fr" target="_blank" rel="noreferrer" className="artist-link">La Java</a>{' '}
               — one of the oldest clubs on the Paris scene, in Belleville.
+            </p>
+          </motion.div>
+        </AnimatedSection>
+
+
+        {/* LISTENING ROOM CONCEPT */}
+        <AnimatedSection
+          id="listening-room"
+          labelledBy="listening-room-title"
+          className="grid grid-cols-1 gap-12 border-b border-[#b8b9ac] py-20 md:grid-cols-[.9fr_1.1fr] md:gap-12 md:py-28 lg:gap-24 lg:py-36"
+        >
+          <motion.div variants={itemVariants} className="md:sticky md:top-24 md:self-start">
+            <p className="mb-5 text-[.65rem] font-bold uppercase tracking-[.14em] text-[#50675d]">03 / Concepts</p>
+            <h2 id="listening-room-title" className="m-0 max-w-[700px] text-[clamp(3.25rem,11vw,7rem)] font-black uppercase leading-[.84] tracking-[-.075em]">
+              LISTENING ROOM
+              <br />
+              <em className="font-normal normal-case">experience.</em>
+            </h2>
+          </motion.div>
+          <motion.div variants={itemVariants} className="flex max-w-[560px] flex-col gap-6 md:mt-20 lg:gap-8">
+            <ListeningRoomRender />
+            <h3 className="m-0 text-xl font-bold uppercase tracking-[-0.02em] transition-transform duration-300 group-hover:translate-x-1 sm:text-2xl">
+              Listening Room Experience
+            </h3>
+
+            <p className="m-0 text-[1rem] leading-[1.6] text-[#50675d] sm:text-[1.1rem]">
+              For Fête de la Musique, we hosted the Listening Room Experience at{' '}
+              <a
+                href="https://www.combo-cafe.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="artist-link"
+              >
+                Combo Café
+              </a>
+              , transforming the auditorium into an intimate space for deep listening and exchange.
+            </p>
+
+            <p className="m-0 text-[1rem] leading-[1.6] text-[#50675d] sm:text-[1.1rem]">
+              Groups of 15 came together to share their favourite songs and discover new
+              sounds through conversation and collective listening. With Combo&apos;s
+              top-class sound system and auditorium as the setting, the experience explored
+              how music can create connection, conversation, and a shared sense of presence.
+            </p>
+          </motion.div>
+        </AnimatedSection>
+
+        {/* GUIDED MEDITATION CONCEPT */}
+        <AnimatedSection
+          id="guided-meditation"
+          labelledBy="guided-meditation-title"
+          className="grid grid-cols-1 gap-12 border-b border-[#b8b9ac] py-20 md:grid-cols-[.9fr_1.1fr] md:gap-12 md:py-28 lg:gap-24 lg:py-36"
+        >
+          <motion.div variants={itemVariants} className="md:sticky md:top-24 md:self-start">
+            <p className="mb-5 text-[.65rem] font-bold uppercase tracking-[.14em] text-[#50675d]">04 / Concepts</p>
+            <h2 id="guided-meditation-title" className="m-0 max-w-[700px] text-[clamp(3.25rem,11vw,7rem)] font-black uppercase leading-[.84] tracking-[-.075em]">
+              GUIDED MEDITATION
+              <br />
+              <em className="font-normal normal-case">deep listening.</em>
+            </h2>
+          </motion.div>
+          <motion.div variants={itemVariants} className="flex max-w-[560px] flex-col gap-6 md:mt-20 lg:gap-8">
+            <GuidedMeditationRender />
+            <h3 className="m-0 text-xl font-bold uppercase tracking-[-0.02em] transition-transform duration-300 group-hover:translate-x-1 sm:text-2xl">
+              Guided Meditation / Deep Listening Experience
+            </h3>
+
+            <p className="m-0 text-[1rem] leading-[1.6] text-[#50675d] sm:text-[1.1rem]">
+              A slower-paced experience combining guided meditation with immersive
+              soundscapes. Participants are invited to slow down, focus on their breathing,
+              and listen closely in a calm and comfortable environment.
+            </p>
+
+            <p className="m-0 text-[1rem] leading-[1.6] text-[#50675d] sm:text-[1.1rem]">
+              Designed around the relationship between attention, breath, and sound, the
+              session creates a simple space to disconnect from the outside world and
+              experience music in a more focused and intentional way.
             </p>
           </motion.div>
         </AnimatedSection>
@@ -630,16 +748,18 @@ export default function Page() {
       {/* FOOTER */}
       <motion.footer
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         className="
+          sticky bottom-0 z-50
           mx-auto flex max-w-[1160px]
           flex-wrap items-center justify-between
           gap-4 px-5 py-6
           text-[.6rem] uppercase
           tracking-[.1em] text-[#50675d]
           sm:px-8 lg:px-12
+          border-t border-[#b8b9ac]
+          bg-[#f1eee7]/90 backdrop-blur-md
         "
       >
         <span>© 2026 IMMERSIA</span>

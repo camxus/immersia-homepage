@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Listening Room — 3D Render</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background: transparent;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100vh;
+        touch-action: none;
+        cursor: grab;
+        filter: grayscale(1) contrast(1.08);
+      }
+      canvas:active {
+        cursor: grabbing;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c1"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      const ROOM_W = 8,
+        ROOM_D = 11,
+        ROOM_H = 4;
+
+      function buildScene() {
+        const scene = new THREE.Scene();
+        scene.background = null;
+
+        const hemi = new THREE.HemisphereLight(0xffffff, 0x888888, 0.65);
+        scene.add(hemi);
+        const dir = new THREE.DirectionalLight(0xffffff, 0.7);
+        dir.position.set(4, 8, 6);
+        scene.add(dir);
+        const dir2 = new THREE.DirectionalLight(0xffffff, 0.35);
+        dir2.position.set(-6, 5, -2);
+        scene.add(dir2);
+
+        const edgeMat = new THREE.LineBasicMaterial({ color: 0x000000 });
+        function addEdges(mesh) {
+          const edges = new THREE.EdgesGeometry(mesh.geometry, 20);
+          const line = new THREE.LineSegments(edges, edgeMat);
+          mesh.add(line);
+        }
+
+        const black = new THREE.MeshStandardMaterial({
+          color: 0xf7f7f7,
+          roughness: 0.75,
+          flatShading: true,
+        });
+        const darkGray = new THREE.MeshStandardMaterial({
+          color: 0xf0f0f0,
+          roughness: 0.75,
+          flatShading: true,
+        });
+        const midGray = new THREE.MeshStandardMaterial({
+          color: 0xfafafa,
+          roughness: 0.75,
+          flatShading: true,
+        });
+        const lightGray = new THREE.MeshStandardMaterial({
+          color: 0xececec,
+          roughness: 0.9,
+          side: THREE.DoubleSide,
+        });
+        const wallMat = new THREE.MeshStandardMaterial({
+          color: 0x222222,
+          roughness: 0.9,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.15,
+          depthWrite: false,
+        });
+        const wallLineMat = new THREE.LineBasicMaterial({ color: 0x000000 });
+        function addWallEdges(mesh) {
+          const edges = new THREE.EdgesGeometry(mesh.geometry, 1);
+          const line = new THREE.LineSegments(edges, wallLineMat);
+          mesh.add(line);
+        }
+        const glow = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const lightBulb = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+        // ---- floor ----
+        const floor = new THREE.Mesh(
+          new THREE.PlaneGeometry(ROOM_W, ROOM_D),
+          lightGray,
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.set(0, 0, ROOM_D / 2);
+        scene.add(floor);
+
+        // floor grid (1m)
+        const grid = new THREE.GridHelper(
+          Math.max(ROOM_W, ROOM_D),
+          Math.max(ROOM_W, ROOM_D),
+          0x222222,
+          0xbbbbbb,
+        );
+
+        grid.position.set(0, 0.01, ROOM_D / 2);
+        scene.add(grid);
+
+        // ---- back wall with glowing screen panel ----
+        const backWall = new THREE.Mesh(
+          new THREE.PlaneGeometry(ROOM_W, ROOM_H),
+          wallMat,
+        );
+        backWall.position.set(0, ROOM_H / 2, ROOM_D);
+        backWall.rotation.y = Math.PI;
+        addWallEdges(backWall);
+        scene.add(backWall);
+
+        const screenGlow = new THREE.Mesh(
+          new THREE.PlaneGeometry(2.2, 2.4),
+          glow,
+        );
+        screenGlow.position.set(0, 2.1, ROOM_D - 0.02);
+        screenGlow.rotation.y = Math.PI;
+        scene.add(screenGlow);
+
+        // ---- side walls ----
+        const leftWall = new THREE.Mesh(
+          new THREE.PlaneGeometry(ROOM_D, ROOM_H),
+          wallMat,
+        );
+        leftWall.rotation.y = Math.PI / 2;
+        leftWall.position.set(-ROOM_W / 2, ROOM_H / 2, ROOM_D / 2);
+        addWallEdges(leftWall);
+        scene.add(leftWall);
+
+        const rightWall = new THREE.Mesh(
+          new THREE.PlaneGeometry(ROOM_D, ROOM_H),
+          wallMat,
+        );
+        rightWall.rotation.y = -Math.PI / 2;
+        rightWall.position.set(ROOM_W / 2, ROOM_H / 2, ROOM_D / 2);
+        addWallEdges(rightWall);
+        scene.add(rightWall);
+
+        // ---- near wall (the "back of the room" behind the viewer, closing the box) ----
+        const nearWall = new THREE.Mesh(
+          new THREE.PlaneGeometry(ROOM_W, ROOM_H),
+          wallMat,
+        );
+        nearWall.position.set(0, ROOM_H / 2, 0);
+        addWallEdges(nearWall);
+        scene.add(nearWall);
+
+        // ---- speaker stack builder (horn-loaded cabinet, cellular horn on top) ----
+        function speakerStack(x) {
+          const g = new THREE.Group();
+
+          // lower cabinet
+          const cab = new THREE.Mesh(
+            new THREE.BoxGeometry(1.0, 1.15, 0.75),
+            darkGray,
+          );
+          cab.position.y = 0.575;
+          addEdges(cab);
+          g.add(cab);
+
+          // woofer cone
+          const cone = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.32, 0.32, 0.08, 20),
+            black,
+          );
+          cone.rotation.x = Math.PI / 2;
+          cone.position.set(0, 0.62, 0.4);
+          g.add(cone);
+          const coneCap = new THREE.Mesh(
+            new THREE.SphereGeometry(0.08, 12, 12),
+            midGray,
+          );
+          coneCap.position.set(0, 0.62, 0.46);
+          g.add(coneCap);
+
+          // small upper driver plate
+          const plate = new THREE.Mesh(
+            new THREE.BoxGeometry(0.28, 0.28, 0.04),
+            midGray,
+          );
+          plate.position.set(0.28, 1.02, 0.39);
+          g.add(plate);
+
+          // horn base (flared cabinet under the cellular horn)
+          const hornBase = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.62, 0.5, 0.5, 4, 1),
+            midGray,
+          );
+          hornBase.rotation.y = Math.PI / 4;
+          hornBase.position.set(0, 1.42, 0);
+          addEdges(hornBase);
+          g.add(hornBase);
+
+          // cellular horn grid (waffle of small raised cells)
+          const cellsX = 5,
+            cellsY = 4;
+          const cellSize = 0.19;
+          for (let cx = 0; cx < cellsX; cx++) {
+            for (let cy = 0; cy < cellsY; cy++) {
+              const cell = new THREE.Mesh(
+                new THREE.BoxGeometry(cellSize * 0.86, cellSize * 0.86, 0.22),
+                darkGray,
+              );
+              const ox = (cx - (cellsX - 1) / 2) * cellSize;
+              const oy = 1.42 + (cy - (cellsY - 1) / 2) * cellSize;
+              cell.position.set(ox, oy, 0.32);
+              g.add(cell);
+            }
+          }
+
+          g.position.set(x, 0, 4.4);
+          return g;
+        }
+
+        scene.add(speakerStack(-2.5));
+        scene.add(speakerStack(2.5));
+
+        // ---- center equipment cabinet with shelves ----
+        const centerCab = new THREE.Group();
+        const cabBody = new THREE.Mesh(
+          new THREE.BoxGeometry(1.7, 1.5, 0.55),
+          midGray,
+        );
+        cabBody.position.y = 0.75;
+        addEdges(cabBody);
+        centerCab.add(cabBody);
+        for (let s = 0; s < 4; s++) {
+          const shelf = new THREE.Mesh(
+            new THREE.BoxGeometry(1.62, 0.03, 0.5),
+            darkGray,
+          );
+          shelf.position.set(0, 0.2 + s * 0.35, 0);
+          centerCab.add(shelf);
+        }
+        // stack of small "books"/media on lower shelf
+        for (let b = 0; b < 6; b++) {
+          const book = new THREE.Mesh(
+            new THREE.BoxGeometry(0.03, 0.22, 0.16),
+            black,
+          );
+          book.position.set(-0.55 + b * 0.04, 0.33, 0.05);
+          centerCab.add(book);
+        }
+        centerCab.position.set(0, 0, 4.65);
+        scene.add(centerCab);
+
+        // ---- foreground leather sled chairs, facing the center of the room ----
+        const ROOM_CENTER_X = 0,
+          ROOM_CENTER_Z = 4.5;
+        function sledChair(x, z) {
+          const g = new THREE.Group();
+          const leather = darkGray;
+          const frame = midGray;
+
+          const seat = new THREE.Mesh(
+            new THREE.BoxGeometry(0.55, 0.06, 0.55),
+            leather,
+          );
+          seat.position.set(0, 0.42, 0);
+          addEdges(seat);
+          g.add(seat);
+
+          const back = new THREE.Mesh(
+            new THREE.BoxGeometry(0.55, 0.62, 0.06),
+            leather,
+          );
+          back.position.set(0, 0.75, -0.26);
+          addEdges(back);
+          g.add(back);
+
+          // sled frame (two loops)
+          for (const side of [-1, 1]) {
+            const loop = new THREE.Mesh(
+              new THREE.TorusGeometry(0.34, 0.02, 6, 16, Math.PI * 1.35),
+              frame,
+            );
+            loop.rotation.z = Math.PI / 2;
+            loop.rotation.y = Math.PI / 2;
+            loop.position.set(side * 0.26, 0.34, -0.02);
+            g.add(loop);
+          }
+
+          g.position.set(x, 0, z);
+          // face the room's center (where the speakers/screen are)
+          const dx = ROOM_CENTER_X - x,
+            dz = ROOM_CENTER_Z - z;
+          g.rotation.y = Math.atan2(dx, dz);
+          return g;
+        }
+
+        scene.add(sledChair(-2.9, 8.6));
+        scene.add(sledChair(2.9, 8.6));
+        scene.add(sledChair(-3.6, 10.2));
+        scene.add(sledChair(3.6, 10.2));
+
+        return scene;
+      }
+
+      function setupRenderer(canvas) {
+        const renderer = new THREE.WebGLRenderer({
+          canvas,
+          antialias: true,
+          alpha: true,
+        });
+
+        renderer.setClearColor(0x000000, 0);
+        function resize() {
+          const w = canvas.clientWidth;
+          const h = canvas.clientHeight;
+          renderer.setSize(w, h, false);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        }
+        resize();
+        window.addEventListener("resize", resize);
+        return renderer;
+      }
+
+      function attachOrbitControls(camera, canvas, target) {
+        const spherical = new THREE.Spherical();
+        spherical.setFromVector3(camera.position.clone().sub(target));
+        let dragging = false,
+          lastX = 0,
+          lastY = 0;
+
+        function apply() {
+          const offset = new THREE.Vector3().setFromSpherical(spherical);
+          camera.position.copy(target).add(offset);
+          camera.lookAt(target);
+        }
+
+        canvas.addEventListener("pointerdown", (e) => {
+          dragging = true;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          canvas.setPointerCapture(e.pointerId);
+        });
+        canvas.addEventListener("pointerup", () => {
+          dragging = false;
+        });
+        canvas.addEventListener("pointercancel", () => {
+          dragging = false;
+        });
+        canvas.addEventListener("pointermove", (e) => {
+          if (!dragging) return;
+          const dx = e.clientX - lastX,
+            dy = e.clientY - lastY;
+          lastX = e.clientX;
+          lastY = e.clientY;
+          spherical.theta -= dx * 0.007;
+          spherical.phi -= dy * 0.007;
+          spherical.phi = Math.max(
+            0.15,
+            Math.min(Math.PI - 0.15, spherical.phi),
+          );
+          apply();
+        });
+        canvas.addEventListener(
+          "wheel",
+          (e) => {
+            e.preventDefault();
+            spherical.radius *= 1 + e.deltaY * 0.001;
+            spherical.radius = Math.max(1.5, Math.min(40, spherical.radius));
+            apply();
+          },
+          { passive: false },
+        );
+      }
+
+      const scene1 = buildScene();
+      const c1 = document.getElementById("c1");
+      const r1 = setupRenderer(c1);
+      const cam1 = new THREE.PerspectiveCamera(
+        48,
+        c1.clientWidth / c1.clientHeight,
+        0.1,
+        100,
+      );
+      cam1.position.set(-7, 8, -3);
+      const target1 = new THREE.Vector3(0, 1.3, 6);
+      cam1.lookAt(target1);
+      attachOrbitControls(cam1, c1, target1);
+
+      window.addEventListener("resize", () => {
+        cam1.aspect = c1.clientWidth / c1.clientHeight;
+        cam1.updateProjectionMatrix();
+      });
+
+      let scrollProgress = 0;
+
+      window.addEventListener("message", (event) => {
+        if (event.data?.type !== "immersia-scroll") return;
+
+        scrollProgress = Math.max(0, Math.min(1, event.data.progress));
+      });
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const p = scrollProgress;
+
+        const angle = Math.PI - p * Math.PI * 1.5;
+
+        const radius = 13;
+
+        // Orbit around the actual center of the room
+        const centerX = 0;
+        const centerZ = 10.5;
+
+        cam1.position.x = centerX + Math.sin(angle) * radius;
+        cam1.position.z = centerZ + Math.cos(angle) * radius;
+        cam1.position.y = 8 + Math.sin(p * Math.PI * 2) * 3.5;
+
+        const lookTarget = target1.clone();
+
+        lookTarget.y -= Math.sin(p * Math.PI * 2) * 0.15;
+
+        cam1.lookAt(lookTarget);
+
+        r1.render(scene1, cam1);
+      }
+      animate();
+    </script>
+  </body>
+</html>

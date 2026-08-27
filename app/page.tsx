@@ -79,30 +79,6 @@ function AnimatedSection({
   id?: string
   labelledBy?: string
 }) {
-  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down')
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-
-      if (currentScrollY > lastScrollY) {
-        setScrollDirection('down')
-      } else if (currentScrollY < lastScrollY) {
-        setScrollDirection('up')
-      }
-
-      lastScrollY = currentScrollY
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
-
   return (
     <motion.section
       id={id}
@@ -114,10 +90,7 @@ function AnimatedSection({
         once: true,
         amount: 0.2,
       }}
-      className={`
-        ${scrollDirection === 'down' ? 'snap-start' : 'snap-end'}
-        ${className}
-      `}
+      className={`snap-start ${className}`}
     >
       {children}
     </motion.section>

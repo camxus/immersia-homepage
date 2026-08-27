@@ -79,6 +79,30 @@ function AnimatedSection({
   id?: string
   labelledBy?: string
 }) {
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down')
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      if (currentScrollY > lastScrollY) {
+        setScrollDirection('down')
+      } else if (currentScrollY < lastScrollY) {
+        setScrollDirection('up')
+      }
+
+      lastScrollY = currentScrollY
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
     <motion.section
       id={id}
@@ -90,7 +114,10 @@ function AnimatedSection({
         once: true,
         amount: 0.2,
       }}
-      className={`snap-start ${className}`}
+      className={`
+        ${scrollDirection === 'down' ? 'snap-start' : 'snap-end'}
+        ${className}
+      `}
     >
       {children}
     </motion.section>
@@ -156,7 +183,7 @@ function VenueRender() {
       <iframe
         title="Venue Layout — 3D Render"
         src="/venue-layout.html?v=3"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px]"
         data-render-id="venue"
       />
     </div>
@@ -172,7 +199,7 @@ function ListeningRoomRender() {
       <iframe
         title="Listening Room — 3D Render"
         src="/listening-room.html"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px]"
         data-render-id="listening"
       />
     </div>
@@ -188,7 +215,7 @@ function GuidedMeditationRender() {
       <iframe
         title="Guided Meditation — 3D Render"
         src="/guided-meditation.html"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px]"
         data-render-id="meditation"
       />
     </div>

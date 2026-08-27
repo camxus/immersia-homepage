@@ -3,9 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Immersia — Immersive Culture',
+  title: 'Immersia — Step Into The Sound',
   description: 'Where light, sound, and space converge to create transformative experiences.',
-  generator: 'v0.app',
   icons: {
     icon: [
       {

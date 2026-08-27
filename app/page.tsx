@@ -156,7 +156,7 @@ function VenueRender() {
       <iframe
         title="Venue Layout — 3D Render"
         src="/venue-layout.html?v=3"
-        className="venue-render__iframe immersive-render pointer-events-none"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
         data-render-id="venue"
       />
     </div>
@@ -172,7 +172,7 @@ function ListeningRoomRender() {
       <iframe
         title="Listening Room — 3D Render"
         src="/listening-room.html"
-        className="venue-render__iframe immersive-render pointer-events-none"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
         data-render-id="listening"
       />
     </div>
@@ -188,7 +188,7 @@ function GuidedMeditationRender() {
       <iframe
         title="Guided Meditation — 3D Render"
         src="/guided-meditation.html"
-        className="venue-render__iframe immersive-render pointer-events-none"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
         data-render-id="meditation"
       />
     </div>
@@ -321,10 +321,10 @@ export default function Page() {
           className="
             grid grid-cols-1 gap-12
             border-b border-[#b8b9ac]
-            py-20
+            py-24
             md:grid-cols-[.9fr_1.1fr]
-            md:gap-12 md:py-28
-            lg:gap-24 lg:py-36
+            md:gap-12 md:py-32
+            lg:gap-24 lg:py-40
           "
         >
           <motion.div
@@ -388,7 +388,7 @@ export default function Page() {
         <AnimatedSection
           id="concepts"
           labelledBy="concepts-title"
-          className="grid grid-cols-1 gap-12 border-b border-[#b8b9ac] py-20 md:grid-cols-[.9fr_1.1fr] md:gap-12 md:py-28 lg:gap-24 lg:py-36"
+          className="grid grid-cols-1 gap-12 border-b border-[#b8b9ac] py-24 md:grid-cols-[.9fr_1.1fr] md:gap-12 md:py-32 lg:gap-24 lg:py-40"
         >
           <motion.div variants={itemVariants} className="md:sticky md:top-24 md:self-start">
             <p className="mb-5 text-[.65rem] font-bold uppercase tracking-[.14em] text-[#50675d]">02 / Concepts</p>
@@ -416,7 +416,7 @@ export default function Page() {
         <AnimatedSection
           id="listening-room"
           labelledBy="listening-room-title"
-          className="grid grid-cols-1 gap-12 border-b border-[#b8b9ac] py-20 md:grid-cols-[.9fr_1.1fr] md:gap-12 md:py-28 lg:gap-24 lg:py-36"
+          className="grid grid-cols-1 gap-12 border-b border-[#b8b9ac] py-24 md:grid-cols-[.9fr_1.1fr] md:gap-12 md:py-32 lg:gap-24 lg:py-40"
         >
           <motion.div variants={itemVariants} className="md:sticky md:top-24 md:self-start">
             <p className="mb-5 text-[.65rem] font-bold uppercase tracking-[.14em] text-[#50675d]">03 / Concepts</p>
@@ -458,7 +458,7 @@ export default function Page() {
         <AnimatedSection
           id="guided-meditation"
           labelledBy="guided-meditation-title"
-          className="grid grid-cols-1 gap-12 border-b border-[#b8b9ac] py-20 md:grid-cols-[.9fr_1.1fr] md:gap-12 md:py-28 lg:gap-24 lg:py-36"
+          className="grid grid-cols-1 gap-12 border-b border-[#b8b9ac] py-24 md:grid-cols-[.9fr_1.1fr] md:gap-12 md:py-32 lg:gap-24 lg:py-40"
         >
           <motion.div variants={itemVariants} className="md:sticky md:top-24 md:self-start">
             <p className="mb-5 text-[.65rem] font-bold uppercase tracking-[.14em] text-[#50675d]">04 / Concepts</p>
@@ -493,9 +493,9 @@ export default function Page() {
           id="history"
           labelledBy="events-title"
           className="
-            border-b border-[#b8b9ac]
-            py-20 md:py-28 lg:py-36
-          "
+    border-b border-[#b8b9ac]
+    py-20 md:py-28 lg:py-36
+  "
         >
           <motion.div
             variants={itemVariants}
@@ -504,9 +504,9 @@ export default function Page() {
             <div>
               <p
                 className="
-                  mb-5 text-[.65rem] font-bold uppercase
-                  tracking-[.14em] text-[#50675d]
-                "
+          mb-5 text-[.65rem] font-bold uppercase
+          tracking-[.14em] text-[#50675d]
+        "
               >
                 01 / Calendar
               </p>
@@ -515,12 +515,14 @@ export default function Page() {
             <h2
               id="events-title"
               className="
-                m-0 max-w-full
-                text-left text-[clamp(4rem,10vw,8.5rem)]
-                font-black uppercase
-                leading-[.82] tracking-[-.075em]
-                md:text-right
-              "
+        m-0 max-w-full
+        text-left
+        text-[clamp(3.25rem,15vw,8.5rem)]
+        font-black uppercase
+        leading-[.82] tracking-[-.075em]
+        md:text-right
+        md:text-[clamp(4rem,10vw,8.5rem)]
+      "
             >
               Gatherings
               <br />
@@ -539,24 +541,24 @@ export default function Page() {
               <div key={heading as string}>
                 <div
                   className="
-                    flex items-baseline justify-between
-                    border-t border-[#0b0d0c] pt-3
-                  "
+            flex items-baseline justify-between
+            border-t border-[#0b0d0c] pt-3
+          "
                 >
                   <p
                     className="
-                      m-0 text-[.65rem] font-bold uppercase
-                      tracking-[.14em] text-[#50675d]
-                    "
+              m-0 text-[.65rem] font-bold uppercase
+              tracking-[.14em] text-[#50675d]
+            "
                   >
                     {eyebrow as string}
                   </p>
 
                   <h3
                     className="
-                      m-0 text-sm font-bold uppercase
-                      tracking-[.08em] text-[#245847]
-                    "
+              m-0 text-sm font-bold uppercase
+              tracking-[.08em] text-[#245847]
+            "
                   >
                     {heading as string}
                   </h3>
@@ -568,12 +570,12 @@ export default function Page() {
                       key={`${event.title}-${index}`}
                       variants={itemVariants}
                       className="
-                        group grid grid-cols-[55px_1fr_24px]
-                        gap-4 border-t border-[#b8b9ac]
-                        py-7
-                        md:grid-cols-[90px_1.2fr_1fr_24px]
-                        md:gap-8 md:py-9
-                      "
+                group grid grid-cols-[55px_1fr_24px]
+                gap-4 border-t border-[#b8b9ac]
+                py-7
+                md:grid-cols-[90px_1.2fr_1fr_24px]
+                md:gap-8 md:py-9
+              "
                     >
                       <p className="m-0 pt-1 text-[.7rem] font-bold text-[#245847]">
                         {event.date}
@@ -582,20 +584,20 @@ export default function Page() {
                       <div>
                         <h3
                           className="
-                            mb-2 text-lg font-bold uppercase
-                            tracking-[-.02em]
-                            transition-transform duration-300
-                            group-hover:translate-x-1 sm:text-xl
-                          "
+                    mb-2 text-lg font-bold uppercase
+                    tracking-[-.02em]
+                    transition-transform duration-300
+                    group-hover:translate-x-1 sm:text-xl
+                  "
                         >
                           {event.title}
                         </h3>
 
                         <p
                           className="
-                            m-0 text-[.7rem] leading-[1.45]
-                            text-[#50675d]
-                          "
+                    m-0 text-[.7rem] leading-[1.45]
+                    text-[#50675d]
+                  "
                         >
                           {event.meta}
                         </p>
@@ -603,9 +605,9 @@ export default function Page() {
 
                       <p
                         className="
-                          m-0 hidden text-[.7rem]
-                          leading-[1.5] text-[#50675d] md:block
-                        "
+                  m-0 hidden text-[.7rem]
+                  leading-[1.5] text-[#50675d] md:block
+                "
                       >
                         {event.detail}
                       </p>
@@ -615,13 +617,13 @@ export default function Page() {
                         size={20}
                         strokeWidth={1.5}
                         className="
-                          ml-auto shrink-0 opacity-50
-                          transition-all duration-300
-                          group-hover:-translate-y-0.5
-                          group-hover:translate-x-0.5
-                          group-hover:opacity-100
-                          md:size-[22px]
-                        "
+                  ml-auto shrink-0 opacity-50
+                  transition-all duration-300
+                  group-hover:-translate-y-0.5
+                  group-hover:translate-x-0.5
+                  group-hover:opacity-100
+                  md:size-[22px]
+                "
                       />
                     </motion.article>
                   ))}
@@ -638,9 +640,9 @@ export default function Page() {
           className="
             grid grid-cols-1 gap-12
             border-b border-[#b8b9ac]
-            py-20
+            py-24
             md:grid-cols-[.9fr_1.1fr]
-            md:gap-12 md:py-36
+            md:gap-12 md:py-32
             lg:gap-24
           "
         >

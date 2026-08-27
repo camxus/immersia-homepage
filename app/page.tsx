@@ -127,15 +127,16 @@ function AnimatedSection({
 function VenueRender() {
   return (
     <div
-      className="venue-render venue-render--exact pointer-events-none"
+      className="venue-render venue-render--exact relative h-[300px] w-full"
       aria-label="Interactive 3D render of the Edition Two venue layout"
     >
       <iframe
         title="Venue Layout — 3D Render"
         src="/venue-layout.html?v=3"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
+        className="venue-render__iframe immersive-render absolute inset-0 h-full w-full"
         data-render-id="venue"
       />
+      <div className="absolute inset-0 z-10 bg-transparent" aria-hidden="true" />
     </div>
   )
 }
@@ -143,15 +144,16 @@ function VenueRender() {
 function ListeningRoomRender() {
   return (
     <div
-      className="venue-render venue-render--exact pointer-events-none"
+      className="venue-render venue-render--exact relative h-[300px] w-full"
       aria-label="Interactive 3D render of the Listening Room"
     >
       <iframe
         title="Listening Room — 3D Render"
         src="/listening-room.html"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
+        className="venue-render__iframe immersive-render absolute inset-0 h-full w-full"
         data-render-id="listening"
       />
+      <div className="absolute inset-0 z-10 bg-transparent" aria-hidden="true" />
     </div>
   )
 }
@@ -159,15 +161,16 @@ function ListeningRoomRender() {
 function GuidedMeditationRender() {
   return (
     <div
-      className="venue-render venue-render--exact pointer-events-none"
+      className="venue-render venue-render--exact relative h-[300px] w-full"
       aria-label="Interactive 3D render of the Guided Meditation space"
     >
       <iframe
         title="Guided Meditation — 3D Render"
         src="/guided-meditation.html"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
+        className="venue-render__iframe immersive-render absolute inset-0 h-full w-full"
         data-render-id="meditation"
       />
+      <div className="absolute inset-0 z-10 bg-transparent" aria-hidden="true" />
     </div>
   )
 }

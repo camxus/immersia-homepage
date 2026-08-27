@@ -302,7 +302,7 @@ export default function Page() {
                 leading-[.84] tracking-[-.075em]
               "
             >
-              Immersia
+              IMMERSIA
               <br />
               —
               <br />
@@ -328,7 +328,7 @@ export default function Page() {
             </p>
 
             <p className="m-0 text-[1rem] leading-[1.6] text-[#50675d] sm:text-[1.1rem]">
-              Immersia aims to create experiences which involve crowds into the shows intrinsically. From live sound baths with performances to stage conceptualizations and stage design.
+              IMMERSIA aims to create experiences which involve crowds into the shows intrinsically. From live sound baths with performances to stage conceptualizations and stage design.
             </p>
 
             <p className="mt-4 m-0 text-[1rem] font-bold leading-[1.6] text-[#245847] sm:text-[1.1rem]">

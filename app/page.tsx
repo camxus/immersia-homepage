@@ -124,56 +124,6 @@ function AnimatedSection({
   )
 }
 
-function Poster({
-  variant,
-  label,
-}: {
-  variant: 'cream' | 'blue' | 'green'
-  label: string
-}) {
-  const variants = {
-    cream: 'bg-[#e5ded0] text-[#0b0d0c]',
-    blue: 'bg-[#09235f] text-[#f1eee7]',
-    green: 'bg-[#245847] text-[#f1eee7]',
-  }
-
-  return (
-    <div
-      className={`
-        relative flex aspect-[.72] flex-col justify-between
-        overflow-hidden border border-[#0b0d0c] p-4
-        ${variants[variant]}
-        ${variant === 'blue' ? 'translate-y-8' : ''}
-        ${variant === 'green' ? '-rotate-4' : ''}
-      `}
-      aria-label={label}
-    >
-      <span className="text-[clamp(1.5rem,3vw,3.5rem)] font-black leading-[.8] tracking-[-.1em]">
-        IMMERSIA
-      </span>
-
-      <small className="max-w-[130px] text-[.62rem] font-bold uppercase leading-[1.15]">
-        {label}
-      </small>
-
-      <b
-        aria-hidden="true"
-        className={`
-          absolute left-[25%] top-[38%]
-          text-[7rem] font-normal leading-none
-          ${variant === 'green'
-            ? 'text-[#f5cf64]'
-            : variant === 'blue'
-              ? 'text-[#e8edf6]'
-              : 'text-[#f5cf64]'}
-        `}
-      >
-        ✳
-      </b>
-    </div>
-  )
-}
-
 function VenueRender() {
   return (
     <div
@@ -183,7 +133,7 @@ function VenueRender() {
       <iframe
         title="Venue Layout — 3D Render"
         src="/venue-layout.html?v=3"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px]"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
         data-render-id="venue"
       />
     </div>
@@ -199,7 +149,7 @@ function ListeningRoomRender() {
       <iframe
         title="Listening Room — 3D Render"
         src="/listening-room.html"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px]"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
         data-render-id="listening"
       />
     </div>
@@ -215,7 +165,7 @@ function GuidedMeditationRender() {
       <iframe
         title="Guided Meditation — 3D Render"
         src="/guided-meditation.html"
-        className="venue-render__iframe immersive-render pointer-events-none h-[300px]"
+        className="venue-render__iframe immersive-render pointer-events-none h-[300px] w-full"
         data-render-id="meditation"
       />
     </div>

@@ -204,8 +204,8 @@
         const floor = new THREE.Mesh(floorGeo, floorMat);
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
-        
-         // floor grid (1m)
+
+        // floor grid (1m)
         const grid = new THREE.GridHelper(
           Math.max(ROOM_WIDTH, ROOM_DEPTH),
           Math.max(ROOM_WIDTH, ROOM_DEPTH),
@@ -424,15 +424,27 @@
           antialias: true,
           alpha: true,
         });
-        const parent = canvas.parentElement;
+
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
         function resize() {
-          const w = canvas.clientWidth || parent.clientWidth;
+          const w = canvas.clientWidth || canvas.parentElement.clientWidth;
           const h = canvas.clientHeight || 340;
+
           renderer.setSize(w, h, false);
+
+          // Keep the same vertical camera framing at every width.
+          const aspect = w / h;
+
           renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+          return aspect;
         }
+
         resize();
+
         window.addEventListener("resize", resize);
+
         return renderer;
       }
 
